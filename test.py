@@ -1,7 +1,3 @@
-!pip install tensorflow
-!pip install numpy
-!pip install matplotlib
-
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
