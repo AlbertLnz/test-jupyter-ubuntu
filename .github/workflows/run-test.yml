@@ -3,7 +3,7 @@ name: Run Test Python Script on Push
 on:
   push:
     branches:
-      - main  # o la rama que desees
+      - master  # o la rama que desees
 
 jobs:
   run-test:
