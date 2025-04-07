@@ -1,7 +1,3 @@
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,6 +6,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import optimizers
+import subprocess
 
 # Cargar los datos MNIST
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
@@ -49,39 +46,25 @@ model.save(model_path)
 test_loss, test_acc = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_acc:.4f}")
 
-# Enviar el archivo por correo electrónico
-def enviar_correo(email_destino, archivo_adjunto):
-    # Configuración del servidor SMTP
-    smtp_server = 'smtp.gmail.com'
-    smtp_port = 587
-    from_email = 'tu_correo@gmail.com'  # Tu correo de envío
-    from_password = 'tu_contraseña'  # Tu contraseña o una App Password si usas Gmail
+# Guardar el modelo en el repositorio de GitHub
+def commit_and_push(model_path):
+    # Asegurarse de que el archivo .h5 esté en el directorio correcto
+    os.rename(model_path, f'./{model_path}')
 
-    # Crear el mensaje
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = email_destino
-    msg['Subject'] = 'Modelo entrenado - archivo .h5'
-
-    # Adjuntar el archivo
-    with open(archivo_adjunto, 'rb') as file:
-        part = MIMEBase('application', 'octet-stream')
-        part.set_payload(file.read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(archivo_adjunto)}')
-        msg.attach(part)
-
-    # Conectar con el servidor SMTP y enviar el mensaje
+    # Hacer git commit y push
     try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()  # Activar seguridad
-        server.login(from_email, from_password)
-        text = msg.as_string()
-        server.sendmail(from_email, email_destino, text)
-        server.quit()
-        print("Correo enviado exitosamente.")
-    except Exception as e:
-        print(f"Error al enviar el correo: {e}")
+        # Añadir el archivo al staging de git
+        subprocess.run(['git', 'add', model_path], check=True)
 
-# Llamar a la función para enviar el correo con el archivo adjunto
-enviar_correo('wanir65649@buides.com', model_path)
+        # Hacer el commit
+        subprocess.run(['git', 'commit', '-m', 'Añadir modelo entrenado'], check=True)
+
+        # Hacer push a la rama actual
+        subprocess.run(['git', 'push'], check=True)
+
+        print(f"Modelo {model_path} guardado correctamente en el repositorio.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error al hacer git commit y push: {e}")
+
+# Llamar a la función para hacer commit y push del archivo
+commit_and_push(model_path)
