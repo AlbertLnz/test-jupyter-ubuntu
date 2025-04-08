@@ -26,7 +26,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt  # Instalar las dependencias listadas en requirements.txt
 
-    # Paso 4: Ejecutar el script test.py
+    # Paso 4: Ejecutar el script test.py con la variable de entorno
     - name: Run test.py
       run: |
-        python test.py  # Ejecuta tu archivo test.py
+        python test.py
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
