@@ -20,7 +20,7 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 
 # CSV
-file_path = 'dhi_binary_BRFSS2015.csv'
+file_path = 'diabetes_binary_health_indicators_BRFSS2015.csv'
 df_original = pd.read_csv(file_path)
 
 print(df_original.info())
