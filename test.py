@@ -6,6 +6,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import optimizers
+import smtplib
+from email.message import EmailMessage
 
 # Cargar los datos MNIST
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
@@ -45,26 +47,30 @@ model.save(model_path)
 test_loss, test_acc = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_acc:.4f}")
 
-# Función para subir el modelo a GitHub Releases
-def upload_to_github_release(model_path):
-    # Configurar la autenticación usando el token de GitHub
-    token = os.getenv('GH_TOKEN')  # Lee el token de la variable de entorno 'GH_TOKEN'
+def enviar_modelo_por_correo(model_path, destinatario, remitente, clave_app):
+    # Crear el mensaje
+    msg = EmailMessage()
+    msg['Subject'] = 'Modelo MNIST Entrenado'
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg.set_content('Adjunto el modelo entrenado en formato .h5.')
 
-    if token is None:
-        print("Error: No se encontró el token de GitHub en las variables de entorno.")
-        return
+    # Leer y adjuntar el archivo del modelo
+    with open(model_path, 'rb') as f:
+        file_data = f.read()
+        file_name = os.path.basename(model_path)
+        msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=file_name)
 
-    # Usar 'softprops/action-gh-release' para crear un release en GitHub y subir el archivo
+    # Enviar el correo (aquí se usa SMTP de Gmail como ejemplo)
     try:
-        import subprocess
-        subprocess.run([
-            "gh", "release", "create", "v1.0", model_path,
-            "--title", "Modelo entrenado",
-            "--notes", "Modelo MNIST entrenado con Keras"
-        ], check=True)
-        print(f"Modelo {model_path} guardado correctamente en GitHub Releases.")
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(remitente, clave_app)
+            smtp.send_message(msg)
+        print("Correo enviado correctamente.")
     except Exception as e:
-        print(f"Error al subir el modelo a GitHub Releases: {e}")
+        print(f"Error al enviar el correo: {e}")
 
-# Llamar a la función para subir el archivo al release de GitHub
-upload_to_github_release(model_path)
+remitente = 'albert2000.lanza@gmail.com'
+destinatario = 'albert.lnz.rio@gmail.com'
+clave_app = os.getenv('GOOGLE_API_KEY_GMAIL')
+enviar_modelo_por_correo(model_path, destinatario, remitente, clave_app)

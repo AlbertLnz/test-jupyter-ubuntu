@@ -28,14 +28,7 @@ jobs:
 
       # Paso 4: Ejecutar el script de Python
       - name: Run test.py
-        run: |
-          echo "Token length from env (debug): ${#GH_TOKEN}"
-          python test.py
-
-      # Paso 5: Crear Release y subir el modelo con softprops/action-gh-release
-      - name: Create Release and Upload Model
-        uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usa el token de acceso personal (PAT) o github.token
-        with:
-          files: modelo.h5  # Asegúrate de que el archivo 'modelo.h5' está generado en tu directorio de trabajo
+          GOOGLE_API_KEY_GMAIL: ${{ secrets.GOOGLE_API_KEY_GMAIL }}
+        run: |
+          python test.py
