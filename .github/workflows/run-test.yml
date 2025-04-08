@@ -16,9 +16,9 @@ jobs:
 
       # Paso 2: Configurar Python
       - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
+          uses: actions/setup-python@v2
+          with:
+            python-version: '3.8'
 
       # Paso 3: Instalar dependencias
       - name: Install dependencies
@@ -26,10 +26,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Paso 4: Ejecutar el script y pasar el token como variable de entorno
+      # Paso 4: Instalar GitHub CLI
+      - name: Set up GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /usr/share/keyrings/githubcli-archive-keyring.gpg > /dev/null
+          sudo apt update
+          sudo apt install gh
+
+      # Paso 5: Ejecutar el script y pasar el token como variable de entorno
       - name: Run test.py with GitHub token
         run: |
-          echo "Token length from env (debug): ${#GITHUB_TOKEN}"
+          echo "Token length from env (debug): ${#GH_TOKEN}"
           python test.py
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Usar el token de GitHub almacenado en secrets
+          GH_TOKEN: ${{ github.token }}  # Usar el token proporcionado por GitHub Actions
