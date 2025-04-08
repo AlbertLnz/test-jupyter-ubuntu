@@ -48,7 +48,7 @@ print(f"Test Accuracy: {test_acc:.4f}")
 # Función para subir el modelo a GitHub Releases
 def upload_to_github_release(model_path):
     # Configurar la autenticación usando el token de GitHub
-    token = os.getenv('GITHUB_TOKEN')  # Lee el token de la variable de entorno 'GITHUB_TOKEN'
+    token = os.getenv('GH_TOKEN')  # Lee el token de la variable de entorno 'GH_TOKEN'
 
     if token is None:
         print("Error: No se encontró el token de GitHub en las variables de entorno.")
