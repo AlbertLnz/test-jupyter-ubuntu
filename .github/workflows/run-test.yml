@@ -27,8 +27,8 @@ jobs:
           pip install -r requirements.txt
 
       # Paso 4: Ejecutar el script de Python
-      - name: Run test.py
+      - name: Run mar.py
         env:
           GOOGLE_API_KEY_GMAIL: ${{ secrets.GOOGLE_API_KEY_GMAIL }}
         run: |
-          python test.py
+          python mar.py

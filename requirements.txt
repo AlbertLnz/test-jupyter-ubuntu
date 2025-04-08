@@ -3,3 +3,9 @@ numpy
 matplotlib
 huggingface_hub
 dotenv
+pandas
+seaborn
+sweetviz
+statsmodels
+scikit-learn
+xgboost
