@@ -51,6 +51,9 @@ def upload_to_huggingface(model_path):
     # Obtener el token desde las variables de entorno
     token = os.getenv('HF_TOKEN')  # Lee el token de la variable de entorno 'HF_TOKEN'
 
+    print("HF_TOKEN existe:", "HF_TOKEN" in os.environ)
+    print("HF_TOKEN length:", len(os.getenv("HF_TOKEN", "")))
+
     if token is None:
         print("Error: No se encontró el token de Hugging Face en las variables de entorno.")
         return
