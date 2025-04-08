@@ -58,7 +58,7 @@ def upload_to_huggingface(model_path):
     # Subir el archivo .h5 al Hugging Face Model Hub
     repo_id = "albertlnz/test-jupyter-ubuntu"  # Cambia esto por el nombre de tu repositorio en Hugging Face
 
-    # Subir el archivo al repositorio en Hugging Face
+    # Subir el archivo al repositorio en Hugging Face!
     try:
         upload_file(
             path_or_fileobj=model_path,
