@@ -75,5 +75,7 @@ def enviar_modelo_por_correo(model_path, destinatario, remitente, clave_app):
 
 remitente = 'albert2000.lanza@gmail.com'
 clave_app = os.getenv('GOOGLE_API_KEY_GMAIL')
+print("CLAVE APP:", clave_app)
 destinatario = 'albert.lnz.rio@gmail.com'
+
 enviar_modelo_por_correo(model_path, destinatario, remitente, clave_app)
