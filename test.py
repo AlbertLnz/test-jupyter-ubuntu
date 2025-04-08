@@ -54,11 +54,13 @@ def upload_to_huggingface(model_path):
     if token is None:
         print("Error: No se encontró el token de Hugging Face en las variables de entorno.")
         return
+    else:
+        print("TOKEN LENGTH:", len(token))
 
     # Subir el archivo .h5 al Hugging Face Model Hub
     repo_id = "albertlnz/test-jupyter-ubuntu"  # Cambia esto por el nombre de tu repositorio en Hugging Face
 
-    # Subir el archivo al repositorio en Hugging Face!
+    # Subir el archivo al repositorio en Hugging Face
     try:
         upload_file(
             path_or_fileobj=model_path,
