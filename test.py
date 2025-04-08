@@ -8,6 +8,9 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import optimizers
 import smtplib
 from email.message import EmailMessage
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Cargar los datos MNIST
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
@@ -71,6 +74,6 @@ def enviar_modelo_por_correo(model_path, destinatario, remitente, clave_app):
         print(f"Error al enviar el correo: {e}")
 
 remitente = 'albert2000.lanza@gmail.com'
-destinatario = 'albert.lnz.rio@gmail.com'
 clave_app = os.getenv('GOOGLE_API_KEY_GMAIL')
+destinatario = 'albert.lnz.rio@gmail.com'
 enviar_modelo_por_correo(model_path, destinatario, remitente, clave_app)
