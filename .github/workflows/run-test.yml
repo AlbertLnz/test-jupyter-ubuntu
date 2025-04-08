@@ -26,17 +26,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Paso 4: Instalar GitHub CLI
-      - name: Set up GitHub CLI
-        run: |
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /usr/share/keyrings/githubcli-archive-keyring.gpg > /dev/null
-          sudo apt update
-          sudo apt install gh
-
-      # Paso 5: Ejecutar el script y pasar el token como variable de entorno
-      - name: Run test.py with GitHub token
+      # Paso 4: Ejecutar el script de Python
+      - name: Run test.py
         run: |
           echo "Token length from env (debug): ${#GH_TOKEN}"
           python test.py
+
+      # Paso 5: Crear Release y subir el modelo con softprops/action-gh-release
+      - name: Create Release and Upload Model
+        uses: softprops/action-gh-release@v1
         env:
-          GH_TOKEN: ${{ github.token }}  # Usar el token proporcionado por GitHub Actions
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usa el token de acceso personal (PAT) o github.token
+        with:
+          files: modelo.h5  # Asegúrate de que el archivo 'modelo.h5' está generado en tu directorio de trabajo
