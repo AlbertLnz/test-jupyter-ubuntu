@@ -26,10 +26,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Paso 4: Ejecutar el script y pasar el token como variable de entorno
+      # Paso 4: Instalar GitHub CLI
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /usr/share/keyrings/github-archive-keyring.gpg > /dev/null
+          sudo apt update
+          sudo apt install gh
+
+      # Paso 5: Ejecutar el script y pasar el token como variable de entorno
       - name: Run test.py with GitHub token
         run: |
-          echo "Token length from env (debug): ${#GITHUB_TOKEN}"
+          echo "Token length from env (debug): ${#GH_TOKEN}"
           python test.py
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Usar el token guardado como GitHub Secret
+
+      # Paso 6: Crear el Release en GitHub y subir el archivo
+      - name: Create GitHub Release and upload model
+        run: |
+          gh release create v1.0 modelo.h5 --title "Modelo entrenado" --notes "Modelo MNIST entrenado con Keras"
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Usar el token guardado como GitHub Secret
