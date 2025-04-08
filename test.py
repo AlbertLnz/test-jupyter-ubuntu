@@ -64,7 +64,7 @@ def enviar_modelo_por_correo(model_path, destinatario, remitente, clave_app):
         file_name = os.path.basename(model_path)
         msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=file_name)
 
-    # Enviar el correo (aquí se usa SMTP de Gmail como ejemplo)!
+    # Enviar el correo (aquí se usa SMTP de Gmail como ejemplo)
     try:
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login(remitente, clave_app)
