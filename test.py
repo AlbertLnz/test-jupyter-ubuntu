@@ -6,7 +6,6 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import optimizers
-from huggingface_hub import upload_file
 
 # Cargar los datos MNIST
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
@@ -46,34 +45,26 @@ model.save(model_path)
 test_loss, test_acc = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_acc:.4f}")
 
-# Subir el modelo a Hugging Face Model Hub
-def upload_to_huggingface(model_path):
-    # Obtener el token desde las variables de entorno
-    token = os.getenv('HF_TOKEN')  # Lee el token de la variable de entorno 'HF_TOKEN'
-
-    print("HF_TOKEN existe:", "HF_TOKEN" in os.environ)
-    print("HF_TOKEN length:", len(os.getenv("HF_TOKEN", "")))
+# Función para subir el modelo a GitHub Releases
+def upload_to_github_release(model_path):
+    # Configurar la autenticación usando el token de GitHub
+    token = os.getenv('GITHUB_TOKEN')  # Lee el token de la variable de entorno 'GITHUB_TOKEN'
 
     if token is None:
-        print("Error: No se encontró el token de Hugging Face en las variables de entorno.")
+        print("Error: No se encontró el token de GitHub en las variables de entorno.")
         return
-    else:
-        print("TOKEN LENGTH:", len(token))
 
-    # Subir el archivo .h5 al Hugging Face Model Hub
-    repo_id = "albertlnz/test-jupyter-ubuntu"  # Cambia esto por el nombre de tu repositorio en Hugging Face
-
-    # Subir el archivo al repositorio en Hugging Face!
+    # Usar 'softprops/action-gh-release' para crear un release en GitHub y subir el archivo
     try:
-        upload_file(
-            path_or_fileobj=model_path,
-            path_in_repo=model_path,
-            repo_id=repo_id,
-            token=token
-        )
-        print(f"Modelo {model_path} guardado correctamente en Hugging Face.")
+        import subprocess
+        subprocess.run([
+            "gh", "release", "create", "v1.0", model_path,
+            "--title", "Modelo entrenado",
+            "--notes", "Modelo MNIST entrenado con Keras"
+        ], check=True)
+        print(f"Modelo {model_path} guardado correctamente en GitHub Releases.")
     except Exception as e:
-        print(f"Error al subir el modelo a Hugging Face: {e}")
+        print(f"Error al subir el modelo a GitHub Releases: {e}")
 
-# Llamar a la función para subir el archivo al repositorio de Hugging Face
-upload_to_huggingface(model_path)
+# Llamar a la función para subir el archivo al release de GitHub
+upload_to_github_release(model_path)

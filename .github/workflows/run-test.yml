@@ -15,10 +15,10 @@ jobs:
         uses: actions/checkout@v2
 
       # Paso 2: Configurar Python
-      - name: Set up Python
+        - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'  # Puedes cambiar la versión de Python aquí
+          python-version: '3.8'
 
       # Paso 3: Instalar dependencias
       - name: Install dependencies
@@ -26,10 +26,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Paso 4: Ejecutar el script y pasar HF_TOKEN como variable de entorno
-      - name: Run test.py with Hugging Face token
+      # Paso 4: Ejecutar el script y pasar el token como variable de entorno
+      - name: Run test.py with GitHub token
         run: |
-          echo "Token length from env (debug): ${#HF_TOKEN}"
+          echo "Token length from env (debug): ${#GITHUB_TOKEN}"
           python test.py
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
