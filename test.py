@@ -6,7 +6,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import optimizers
-import subprocess
+from huggingface_hub import upload_file
 
 # Cargar los datos MNIST
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
@@ -46,25 +46,29 @@ model.save(model_path)
 test_loss, test_acc = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_acc:.4f}")
 
-# Guardar el modelo en el repositorio de GitHub
-def commit_and_push(model_path):
-    # Asegurarse de que el archivo .h5 esté en el directorio correcto
-    os.rename(model_path, f'./{model_path}')
+# Subir el modelo a Hugging Face Model Hub
+def upload_to_huggingface(model_path):
+    # Obtener el token desde las variables de entorno
+    token = os.getenv('HF_TOKEN')  # Lee el token de la variable de entorno 'HF_TOKEN'
 
-    # Hacer git commit y push
+    if token is None:
+        print("Error: No se encontró el token de Hugging Face en las variables de entorno.")
+        return
+
+    # Subir el archivo .h5 al Hugging Face Model Hub
+    repo_id = "albertlnz/test-jupyter-ubuntu"  # Cambia esto por el nombre de tu repositorio en Hugging Face
+
+    # Subir el archivo al repositorio en Hugging Face
     try:
-        # Añadir el archivo al staging de git
-        subprocess.run(['git', 'add', model_path], check=True)
+        upload_file(
+            path_or_fileobj=model_path,
+            path_in_repo=model_path,
+            repo_id=repo_id,
+            token=token
+        )
+        print(f"Modelo {model_path} guardado correctamente en Hugging Face.")
+    except Exception as e:
+        print(f"Error al subir el modelo a Hugging Face: {e}")
 
-        # Hacer el commit
-        subprocess.run(['git', 'commit', '-m', 'Añadir modelo entrenado'], check=True)
-
-        # Hacer push a la rama actual
-        subprocess.run(['git', 'push'], check=True)
-
-        print(f"Modelo {model_path} guardado correctamente en el repositorio.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error al hacer git commit y push: {e}")
-
-# Llamar a la función para hacer commit y push del archivo
-commit_and_push(model_path)
+# Llamar a la función para subir el archivo al repositorio de Hugging Face
+upload_to_huggingface(model_path)
